@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Jogos Educativos</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1c1e21;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #606770;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .game-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .game-link {
+            display: block;
+            padding: 20px 30px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #007bff;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        .game-link:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Portal de Jogos</h1>
+        <p>Escolha um dos jogos abaixo para começar a jogar!</p>
+        <div class="game-list">
+            <a href="regua.html" class="game-link">📏 Laboratório de Medidas</a>
+            <a href="a oficina do relojoeiro.html" class="game-link">⚙️ A Oficina do Relojoeiro</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório de Medidas</title>
+    <style>
+        /* Estilo geral com tema escolar */
+        body {
+            font-family: Verdana, Geneva, sans-serif;
+            background-color: #e0d6c4; /* Fundo de mesa de madeira clara */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><g fill="%23d6c8b4" fill-opacity="0.4"><rect x="50" width="50" height="50"/><rect y="50" width="50" height="50"/></g></svg>');
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Container principal como uma folha de caderno */
+        .container {
+            background-color: #fdfdfd;
+            padding: 20px 40px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+        
+        /* Linha de margem do caderno */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 30px;
+            bottom: 0;
+            width: 2px;
+            background-color: #ffb6c1; /* Linha rosa */
+        }
+
+        h1 {
+            color: #2c3e50; /* Cinza ardósia */
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #34495e; /* Cinza ardósia mais claro */
+            font-size: 1.8em;
+            margin-top: 0;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* --- TELA DE INTRODUÇÃO --- */
+        #tela-introducao p {
+            font-size: 1.3em;
+            color: #555;
+        }
+
+        .botoes-modos {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modo-btn {
+            padding: 15px 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            background-color: #f0f0f0;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modo-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        /* --- TELA DO JOGO --- */
+        #instrucao {
+            font-size: 1.6em;
+            color: #0056b3;
+            margin: 20px 0;
+            font-weight: bold;
+            min-height: 50px;
+        }
+
+        /* Área de medida como papel pautado */
+        .area-de-medida {
+            position: relative;
+            height: 150px;
+            margin-top: 20px;
+            border: 1px solid #dcdcdc;
+            background-color: #fff;
+            background-image: linear-gradient(#dbeaff 1px, transparent 1px);
+            background-size: 100% 25px;
+        }
+        
+        #objeto-container {
+            position: absolute;
+            top: 20px;
+            height: 50px;
+        }
+
+        #lapis-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+        }
+        
+        #resizer {
+            width: 28px; height: 28px;
+            background-color: #f1c40f; /* Amarelo */
+            border-radius: 50%;
+            border: 2px solid white;
+            position: absolute;
+            right: -14px; top: 50%;
+            transform: translateY(-50%);
+            cursor: ew-resize;
+            z-index: 10;
+        }
+
+        #regua {
+            width: 100%; height: 50px;
+            background-color: #f3d9a5;
+            border: 2px solid #c7a876;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 0;
+            display: flex;
+            align-items: flex-end;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .tick { position: absolute; bottom: 0; width: 2px; background-color: #333; }
+        .tick-cm { height: 25px; }
+        .tick-half-cm { height: 15px; }
+        .tick-label { position: absolute; bottom: 25px; font-size: 14px; font-weight: bold; transform: translateX(-50%); }
+
+        .controles-jogo {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #input-estimativa {
+            padding: 10px;
+            font-size: 1.5em;
+            width: 100px;
+            text-align: center;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+        }
+        
+        #verificarBtn {
+            padding: 15px 40px; font-size: 1.5em; font-weight: bold;
+            color: white; background-color: #2980b9;
+            border: none; border-radius: 8px; cursor: pointer;
+        }
+        
+        #voltarBtn {
+            padding: 10px 20px; font-size: 1em; background-color: #7f8c8d; color: white;
+        }
+
+        #feedback { font-size: 2em; font-weight: bold; height: 40px; margin-top: 20px; }
+        .correto { color: #27ae60; }
+        .errado { color: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="tela-introducao">
+        <h1>Laboratório de Medidas</h1>
+        <p>Escolha uma atividade para começar!</p>
+        <div class="botoes-modos">
+            <button class="modo-btn" data-modo="exato">Tamanho Exato</button>
+            <button class="modo-btn" data-modo="estimativa">Qual é a Medida?</button>
+            <button class="modo-btn" data-modo="distancia">Qual a Distância?</button>
+        </div>
+    </div>
+
+    <div id="tela-jogo" class="hidden">
+        <h2 id="titulo-modo">Modo de Jogo</h2>
+        <p id="instrucao">Carregando...</p>
+
+        <div class="area-de-medida">
+            <div id="objeto-container">
+                <svg id="lapis-svg" viewBox="0 0 200 50" preserveAspectRatio="none">
+                    <polygon points="170,0 200,25 170,50" fill="#fabebe"/> <rect x="20" y="0" width="150" height="50" fill="#f1c40f"/> <polygon points="20,0 0,25 20,50" fill="#594f4f"/> </svg>
+                <div id="resizer"></div>
+            </div>
+            <div id="regua"></div>
+        </div>
+
+        <div class="controles-jogo">
+            <input type="number" id="input-estimativa" class="hidden" placeholder="cm">
+            <button id="verificarBtn">Verificar!</button>
+        </div>
+        
+        <p id="feedback"></p>
+        <button id="voltarBtn" class="modo-btn">Voltar ao Menu</button>
+    </div>
+</div>
+
+<script>
+    const pixelsPorCm = 25; 
+    const maxCm = 30;
+
+    const telaIntroducao = document.getElementById('tela-introducao');
+    const telaJogo = document.getElementById('tela-jogo');
+    const tituloModoEl = document.getElementById('titulo-modo');
+    const instrucaoEl = document.getElementById('instrucao');
+    const objetoContainerEl = document.getElementById('objeto-container');
+    const resizerEl = document.getElementById('resizer');
+    const reguaEl = document.getElementById('regua');
+    const verificarBtn = document.getElementById('verificarBtn');
+    const inputEstimativaEl = document.getElementById('input-estimativa');
+    const feedbackEl = document.getElementById('feedback');
+    const voltarBtn = document.getElementById('voltarBtn');
+    
+    let modoAtual = '';
+    let respostaCorreta = 0;
+
+    document.querySelectorAll('.modo-btn[data-modo]').forEach(button => {
+        button.addEventListener('click', () => {
+            modoAtual = button.getAttribute('data-modo');
+            iniciarJogo(modoAtual);
+        });
+    });
+
+    voltarBtn.addEventListener('click', () => {
+        telaJogo.classList.add('hidden');
+        telaIntroducao.classList.remove('hidden');
+    });
+
+    function iniciarJogo(modo) {
+        telaIntroducao.classList.add('hidden');
+        telaJogo.classList.remove('hidden');
+        gerarRegua();
+        novaRodada();
+    }
+
+    function novaRodada() {
+        feedbackEl.textContent = '';
+        feedbackEl.className = '';
+        inputEstimativaEl.value = '';
+        resizerEl.classList.remove('hidden');
+        inputEstimativaEl.classList.add('hidden');
+        objetoContainerEl.style.left = '0px';
+
+        if (modoAtual === 'exato') {
+            tituloModoEl.textContent = 'Atividade: Tamanho Exato';
+            respostaCorreta = Math.floor(Math.random() * 20) + 1;
+            instrucaoEl.textContent = `Ajuste o lápis para medir ${respostaCorreta} cm!`;
+            objetoContainerEl.style.width = '80px';
+        } else if (modoAtual === 'estimativa') {
+            tituloModoEl.textContent = 'Atividade: Qual é a Medida?';
+            resizerEl.classList.add('hidden');
+            inputEstimativaEl.classList.remove('hidden');
+            let larguraSorteada = Math.floor(Math.random() * 20) + 2;
+            respostaCorreta = larguraSorteada;
+            objetoContainerEl.style.width = `${larguraSorteada * pixelsPorCm}px`;
+            instrucaoEl.textContent = `Quantos centímetros o lápis mede?`;
+        } else if (modoAtual === 'distancia') {
+            tituloModoEl.textContent = 'Atividade: Qual a Distância?';
+            resizerEl.classList.add('hidden');
+            inputEstimativaEl.classList.remove('hidden');
+            let inicioCm, tamanhoCm;
+            do {
+                inicioCm = Math.floor(Math.random() * 20);
+                tamanhoCm = Math.floor(Math.random() * 10) + 3;
+            } while (inicioCm + tamanhoCm > maxCm - 1);
+            respostaCorreta = tamanhoCm;
+            objetoContainerEl.style.left = `${inicioCm * pixelsPorCm}px`;
+            objetoContainerEl.style.width = `${tamanhoCm * pixelsPorCm}px`;
+            instrucaoEl.innerHTML = `Calcule a distância entre o início e o fim do lápis.`;
+        }
+    }
+
+    function verificarResposta() {
+        const larguraAtualEmCm = objetoContainerEl.offsetWidth / pixelsPorCm;
+        const chute = parseFloat(inputEstimativaEl.value);
+
+        if (modoAtual === 'exato') {
+            if (Math.abs(larguraAtualEmCm - respostaCorreta) < 0.5) {
+                feedbackCorreto();
+            } else {
+                feedbackErrado();
+            }
+        } else if (modoAtual === 'estimativa' || modoAtual === 'distancia') {
+            if (!chute && chute !== 0) {
+                feedbackErrado("Digite um número na caixa de resposta.");
+                return;
+            }
+            if (Math.abs(chute - respostaCorreta) < 0.1) {
+                feedbackCorreto(`Correto! A resposta era ${respostaCorreta} cm.`);
+            } else {
+                feedbackErrado("Quase! Calcule novamente com atenção.");
+            }
+        }
+    }
+
+    function feedbackCorreto(mensagem = "Excelente! Resposta correta!") {
+        feedbackEl.textContent = mensagem;
+        feedbackEl.className = 'correto';
+        setTimeout(novaRodada, 2500);
+    }
+
+    function feedbackErrado(mensagem = "Ops! Tente de novo.") {
+        feedbackEl.textContent = mensagem;
+        feedbackEl.className = 'errado';
+    }
+
+    function gerarRegua() {
+        reguaEl.innerHTML = '';
+        for (let cm = 0; cm <= maxCm; cm++) {
+            const posicao = cm * pixelsPorCm;
+            const tickEl = document.createElement('div');
+            tickEl.className = 'tick tick-cm';
+            tickEl.style.left = `${posicao}px`;
+            const labelEl = document.createElement('span');
+            labelEl.className = 'tick-label';
+            labelEl.textContent = cm;
+            labelEl.style.left = `${posicao}px`;
+            reguaEl.appendChild(tickEl);
+            reguaEl.appendChild(labelEl);
+            if (cm < maxCm) {
+                const halfTickEl = document.createElement('div');
+                halfTickEl.className = 'tick tick-half-cm';
+                halfTickEl.style.left = `${posicao + (pixelsPorCm / 2)}px`;
+                reguaEl.appendChild(halfTickEl);
+            }
+        }
+    }
+
+    resizerEl.addEventListener('mousedown', function(e) {
+        if (resizerEl.classList.contains('hidden')) return;
+        e.preventDefault();
+        const startX = e.clientX;
+        const startWidth = objetoContainerEl.offsetWidth;
+        function aoArrastar(e) {
+            const novaLargura = startWidth + (e.clientX - startX);
+            if (novaLargura > 20) {
+                objetoContainerEl.style.width = `${novaLargura}px`;
+            }
+        }
+        function aoSoltar() {
+            document.removeEventListener('mousemove', aoArrastar);
+            document.removeEventListener('mouseup', aoSoltar);
+        }
+        document.addEventListener('mousemove', aoArrastar);
+        document.addEventListener('mouseup', aoSoltar);
+    });
+
+    verificarBtn.addEventListener('click', verificarResposta);
+
+</script>
+</body>
+</html>
